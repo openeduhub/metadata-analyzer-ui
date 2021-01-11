@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <meta charset="UTF-8">
+    <title>test</title>
+    <style>
+        .discipline li{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h4>Gefundene Daten für {{ title }}</h4>
+
+    <h5>Fachgebiete</h5>
+    <ul class="discipline">
+        {% for d in disciplines %}
+            <li>{{ d }}</li>
+        {% endfor %}
+    </ul>
+    <h5>Kategorien (Wikipedia)</h5>
+    <ul>
+        {% for key, c in categories %}
+            <li><a href="https://de.wikipedia.org/wiki/{{ key }}" target="_blank">{{ key }}</a> ({{ c }})</li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>
