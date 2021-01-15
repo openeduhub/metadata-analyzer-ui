@@ -7,7 +7,8 @@
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node ."
+    "start": "node --max-http-header-size=1638400 .",
+    "docker-build": "docker build --tag yovisto-ui:latest . && "
   },
   "keywords": [],
   "author": "",
