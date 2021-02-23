@@ -1,6 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, map, switchMap } from 'rxjs/operators';
 import { EduSharingNode } from 'src/types/edu-sharing-node';
 import { SkosEntry } from 'src/types/skos-entry';
 import {
@@ -14,7 +14,7 @@ import {
 export class YovistoService {
     private readonly REPO_URL = 'https://redaktion-staging.openeduhub.net/edu-sharing/';
 
-    constructor(private httpService: HttpService) {}
+    constructor(private readonly httpService: HttpService) {}
 
     analyze(node: EduSharingNode): Observable<{ data: AnalyzeData; disciplines: string[] }> {
         return this.fetchAnalyze(node).pipe(
@@ -24,6 +24,7 @@ export class YovistoService {
                         this.fetchDisciplineLabel(disciplineUrl),
                     ),
                 ).pipe(
+                    defaultIfEmpty<string[]>([]),
                     map((disciplines) => ({
                         data,
                         disciplines,
@@ -48,7 +49,7 @@ export class YovistoService {
                             })),
                         ),
                     ),
-                ),
+                ).pipe(defaultIfEmpty<{ label: string; precision: number }[]>([])),
             ),
         );
     }
@@ -68,6 +69,9 @@ export class YovistoService {
                         ),
                     ),
                 ).pipe(
+                    defaultIfEmpty<({ label: string; url: string; similarity: number } | null)[]>(
+                        [],
+                    ),
                     map((results) =>
                         results.filter((result): result is RecommendResult => result !== null),
                     ),
@@ -89,8 +93,8 @@ export class YovistoService {
 
     private fetchPredictSubjects(node: EduSharingNode): Observable<PredictionResult[]> {
         const text = [
-            node.properties['cclom:title'].join(' '),
-            node.properties['cclom:general_description'].join(' '),
+            ...(node.properties['cclom:title'] ?? []),
+            ...(node.properties['cclom:general_description'] ?? []),
         ].join(' ');
         const data = { text };
         return this.httpService

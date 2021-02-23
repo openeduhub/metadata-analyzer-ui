@@ -1,0 +1,370 @@
+{
+  "openapi": "3.0.2",
+  "info": { "title": "metadata_extractor", "version": "1.0" },
+  "paths": {
+    "/extract_meta": {
+      "post": {
+        "summary": "Extract Meta",
+        "description": "The main endpoint for metadata extraction.",
+        "operationId": "extract_meta_extract_meta_post",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Input" } } },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Output" } }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/_ping": {
+      "get": {
+        "summary": "Ping",
+        "description": "Ping function for automatic health check.",
+        "operationId": "ping__ping_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    },
+    "/get_progress": {
+      "get": {
+        "summary": "Get Progress",
+        "description": "Returns progress of the metadata extraction. From 0 to 1 (=100%).",
+        "operationId": "get_progress_get_progress_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExtractorTags": {
+        "title": "ExtractorTags",
+        "type": "object",
+        "properties": {
+          "advertisement": {
+            "title": "Advertisement",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Are there advertisments?Probability = Ratio of found elements which are identified as ads."
+          },
+          "easy_privacy": {
+            "title": "Easy Privacy",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Are there trackers?Probability = 1 If any element is found, else 0"
+          },
+          "malicious_extensions": {
+            "title": "Malicious Extensions",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Are there malicious extensions, e.g. .exe, .docm?Probability = 1 If any matching element is found, else 0."
+          },
+          "extract_from_files": {
+            "title": "Extract From Files",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Can all linked files be extracted, e.g., is the text in a PDF readable?Probability = Ratio of found files which are extractable."
+          },
+          "cookies_in_html": {
+            "title": "Cookies In Html",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Are parts of the html matching with known cookie code?Probability = 1 If any matching element is found, else 0."
+          },
+          "cookies": {
+            "title": "Cookies",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Are cookies set and are they not whitelisted? Currently, there is no whitelist, yet.Probability = 1 If any matching element is found, else 0."
+          },
+          "fanboy_annoyance": {
+            "title": "Fanboy Annoyance",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Code that indicates 'annoying' behaviour.Probability = Ratio of matching elements."
+          },
+          "fanboy_notification": {
+            "title": "Fanboy Notification",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Code that indicates notifications.Probability = Ratio of matching elements."
+          },
+          "fanboy_social_media": {
+            "title": "Fanboy Social Media",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Code that indicates social media links and content.Probability = 1 If any matching element is found, else 0."
+          },
+          "anti_adblock": {
+            "title": "Anti Adblock",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Code that indicates anti adblock walls.Probability = 1 If any matching element is found, else 0."
+          },
+          "easylist_germany": {
+            "title": "Easylist Germany",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. A blocking list specific for Germany.Probability = 1 If any matching element is found, else 0."
+          },
+          "easylist_adult": {
+            "title": "Easylist Adult",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. A blocking list specific adult/PG18 content.Probability = 1 If any matching element is found, else 0."
+          },
+          "paywall": {
+            "title": "Paywall",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Keywords indicating paywalls.Probability = 1 If any matching element is found, else 0."
+          },
+          "security": {
+            "title": "Security",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Are security policies set? This feature is currently checking many parameters, which are partially new. Probability = Ratio of matching elements."
+          },
+          "iframe_embeddable": {
+            "title": "Iframe Embeddable",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Release. Are iFrames embeddable?Probability = 1 If any matching element is found, else 0."
+          },
+          "pop_up": {
+            "title": "Pop Up",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Are pop ups present?Probability = 1 If any matching element is found, else 0."
+          },
+          "reg_wall": {
+            "title": "Reg Wall",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Are registration walls present?Probability = 1 If any matching element is found, else 0."
+          },
+          "log_in_out": {
+            "title": "Log In Out",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Is content present that indicates log in or out forms?Probability = 1 If any matching element is found, else 0."
+          },
+          "accessibility": {
+            "title": "Accessibility",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Beta. Google Lighthouse based calculation of accessibilityProbability = 1 if the website is 100% accessible, 0 if the website is not accessible at all."
+          },
+          "g_d_p_r": {
+            "title": "G D P R",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Are there indications that GDPR is obeyed?Probability = The more indicators are found the higher this value is."
+          },
+          "javascript": {
+            "title": "Javascript",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Is there javascript among the files of this website?Always False for now"
+          },
+          "metatag_explorer": {
+            "title": "Metatag Explorer",
+            "allOf": [{ "$ref": "#/components/schemas/MetadataTags" }],
+            "description": "Alpha. Store meta tags to explore for interesting dataProbability = Ratio fo javascript files versus all files."
+          }
+        }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ValidationError" }
+          }
+        }
+      },
+      "Input": {
+        "title": "Input",
+        "required": ["url"],
+        "type": "object",
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The base url of the scraped website."
+          },
+          "html": {
+            "title": "Html",
+            "type": "string",
+            "description": "Everything scraped from the website as text.",
+            "default": ""
+          },
+          "headers": {
+            "title": "Headers",
+            "type": "string",
+            "description": "The response header interpretable as dict.",
+            "default": ""
+          },
+          "har": {
+            "title": "Har",
+            "type": "string",
+            "description": "The har object interpretable as json.",
+            "default": ""
+          },
+          "allow_list": {
+            "title": "Allow List",
+            "allOf": [{ "$ref": "#/components/schemas/ListTags" }],
+            "description": "A list of key:bool pairs. Any metadata key == True will be extracted. If this list is not given, all values will be extracted.",
+            "default": {
+              "advertisement": true,
+              "easy_privacy": true,
+              "malicious_extensions": true,
+              "extracted_links": true,
+              "extract_from_files": true,
+              "cookies_in_html": true,
+              "cookies": true,
+              "fanboy_annoyance": true,
+              "fanboy_notification": true,
+              "fanboy_social_media": true,
+              "anti_adblock": true,
+              "easylist_germany": true,
+              "easylist_adult": true,
+              "paywall": true,
+              "security": true,
+              "iframe_embeddable": true,
+              "pop_up": true,
+              "reg_wall": true,
+              "log_in_out": true,
+              "accessibility": true,
+              "g_d_p_r": true,
+              "javascript": true,
+              "metatag_explorer": true
+            }
+          },
+          "debug": {
+            "title": "Debug",
+            "type": "boolean",
+            "description": "Developer flag to receive more information through API",
+            "default": true
+          }
+        }
+      },
+      "ListTags": {
+        "title": "ListTags",
+        "type": "object",
+        "properties": {
+          "advertisement": { "title": "Advertisement", "type": "boolean", "default": true },
+          "easy_privacy": { "title": "Easy Privacy", "type": "boolean", "default": true },
+          "malicious_extensions": {
+            "title": "Malicious Extensions",
+            "type": "boolean",
+            "default": true
+          },
+          "extracted_links": { "title": "Extracted Links", "type": "boolean", "default": true },
+          "extract_from_files": {
+            "title": "Extract From Files",
+            "type": "boolean",
+            "default": true
+          },
+          "cookies_in_html": { "title": "Cookies In Html", "type": "boolean", "default": true },
+          "cookies": { "title": "Cookies", "type": "boolean", "default": true },
+          "fanboy_annoyance": { "title": "Fanboy Annoyance", "type": "boolean", "default": true },
+          "fanboy_notification": {
+            "title": "Fanboy Notification",
+            "type": "boolean",
+            "default": true
+          },
+          "fanboy_social_media": {
+            "title": "Fanboy Social Media",
+            "type": "boolean",
+            "default": true
+          },
+          "anti_adblock": { "title": "Anti Adblock", "type": "boolean", "default": true },
+          "easylist_germany": { "title": "Easylist Germany", "type": "boolean", "default": true },
+          "easylist_adult": { "title": "Easylist Adult", "type": "boolean", "default": true },
+          "paywall": { "title": "Paywall", "type": "boolean", "default": true },
+          "security": { "title": "Security", "type": "boolean", "default": true },
+          "iframe_embeddable": { "title": "Iframe Embeddable", "type": "boolean", "default": true },
+          "pop_up": { "title": "Pop Up", "type": "boolean", "default": true },
+          "reg_wall": { "title": "Reg Wall", "type": "boolean", "default": true },
+          "log_in_out": { "title": "Log In Out", "type": "boolean", "default": true },
+          "accessibility": { "title": "Accessibility", "type": "boolean", "default": true },
+          "g_d_p_r": { "title": "G D P R", "type": "boolean", "default": true },
+          "javascript": { "title": "Javascript", "type": "boolean", "default": true },
+          "metatag_explorer": { "title": "Metatag Explorer", "type": "boolean", "default": true }
+        }
+      },
+      "MetadataTags": {
+        "title": "MetadataTags",
+        "type": "object",
+        "properties": {
+          "values": {
+            "title": "Values",
+            "type": "array",
+            "items": {},
+            "description": "Raw values found by the metadata extractors.",
+            "default": []
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "number",
+            "description": "The calculated probability that the decision is certain.",
+            "default": 0
+          },
+          "decision": {
+            "title": "Decision",
+            "type": "boolean",
+            "description": "A user friendly decision whether or not this metadata is present in the website.",
+            "default": false
+          },
+          "time_for_completion": {
+            "title": "Time For Completion",
+            "type": "number",
+            "description": "Debug information. How long did this metadata take?",
+            "default": -1
+          }
+        }
+      },
+      "Output": {
+        "title": "Output",
+        "required": ["url"],
+        "type": "object",
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The base url of the scraped website."
+          },
+          "meta": {
+            "title": "Meta",
+            "allOf": [{ "$ref": "#/components/schemas/ExtractorTags" }],
+            "description": "The extracted metadata."
+          },
+          "exception": {
+            "title": "Exception",
+            "type": "string",
+            "description": "A description of the exception which caused the extraction to fail."
+          },
+          "time_until_complete": {
+            "title": "Time Until Complete",
+            "type": "number",
+            "description": "The time needed from starting the extraction until sending the resulting meta data out.",
+            "default": -1
+          }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": ["loc", "msg", "type"],
+        "type": "object",
+        "properties": {
+          "loc": { "title": "Location", "type": "array", "items": { "type": "string" } },
+          "msg": { "title": "Message", "type": "string" },
+          "type": { "title": "Error Type", "type": "string" }
+        }
+      }
+    }
+  }
+}

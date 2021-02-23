@@ -1,0 +1,66 @@
+<div class="container">
+    <h1>Gefundene Daten für "{{ title }}"</h1>
+    <div>Erkannte Sprache: {{ language }}</div>
+    <div class="row">
+        <div class="col s6">
+            <h2>Fachgebiete (via Text Analyzer)</h2>
+            <ul class="discipline">
+                <li v-for="d in disciplinesAnalyze">{{ d }}</li>
+            </ul>
+        </div>
+        <div class="col s6">
+            <h2>Fachgebiete (via Prediction Network)</h2>
+            <ul class="discipline">
+                <li v-for="d in disciplinesPredict">
+                    {{ d.label }} ({{ d.precision.toFixed(2) }})
+                </li>
+            </ul>
+        </div>
+    </div>
+    <h2>Ähnliche/Empfohlene Elemente (via Prediction Network)</h2>
+    <ul class="discipline">
+        <li v-for="d in recommend">
+            <a :href="d.url" target="_BLANK">{{ d.label }}</a>
+            ({{ d.similarity.toFixed(2) }})
+        </li>
+    </ul>
+    <h2>Kategorien (Text Analyzer / Wikipedia)</h2>
+    <ul>
+        <li v-for="(c, key) in categories">
+            <a :href="'https://de.wikipedia.org/wiki/' + key" target="_blank">{{ key }}</a>
+            ({{ c }})
+        </li>
+    </ul>
+    <h2>Akzeptanzkriterien</h2>
+    <p>
+        Siehe
+        <a
+            href="https://github.com/codecentric/metadata_picker/blob/main/docs/acceptance.md"
+            target="_blank"
+            >Erläuterung</a
+        >.
+    </p>
+    <ul class="collapsible meta">
+        <li v-for="m in meta">
+            <div class="collapsible-header">
+                <div
+                    class="title"
+                    :class="{ good: m.decision === false, bad: m.decision === true, 'undecided': m.probability < 0.5 }"
+                >
+                    {{ m.title }}: {{ m.decision }} ({{ m.probability.toFixed(2) }})
+                </div>
+            </div>
+            <div class="collapsible-body">
+                <p>{{ m.description }}</p>
+                <p>
+                    <div>decision: {{ m.decision }}</div>
+                    <div>probability: {{ m.probability.toFixed(2) }}</div>
+                </p>
+                <p>
+                    <div>value:</div>
+                    <pre>{{ JSON.stringify(m.values, null, 4) }}</pre>
+                </p>
+            </div>
+        </li>
+    </ul>
+</div>

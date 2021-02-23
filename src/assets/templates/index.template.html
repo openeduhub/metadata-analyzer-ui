@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <!-- Materialize https://materializecss.com/ -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <meta charset="UTF-8" />
+        <title>Metadaten</title>
+        <style>
+            .discipline li {
+                font-weight: bold;
+            }
+            .title {
+                font-weight: bold;
+                margin-bottom: 0.2em;
+            }
+            .bad {
+                color: #800;
+            }
+            .good {
+                color: #080;
+            }
+            .undecided {
+                color: #aaa;
+            }
+            h1 {
+                font-size: 2.28rem;
+            }
+            h2 {
+                font-size: 1.64rem;
+            }
+            p {
+                margin-top: 0;
+            }
+            p:last-of-type {
+                margin-bottom: 0;
+            }
+            pre {
+                margin: 0;
+            }
+            .collapsible-header {
+                display: flex;
+                flex-direction: column;
+            }
+        </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const elements = document.querySelectorAll('.collapsible');
+                M.Collapsible.init(elements);
+            });
+        </script>
+    </head>
+    <body>
+        <!--vue-ssr-outlet-->
+    </body>
+</html>
