@@ -25,6 +25,10 @@
     "generate": "openapi --input ./src/assets/api/codecentric.openapi.json --output ./src/generated/ --client xhr",
     "postinstall": "husky install || exit 0"
   },
+  "lint-staged": {
+    "{src,test}/**/*.ts": "prettier --write",
+    "{src,apps,libs,test}/**/*.ts": "eslint --fix"
+  },
   "dependencies": {
     "@nestjs/common": "^7.5.1",
     "@nestjs/core": "^7.5.1",
@@ -50,6 +54,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "husky": "^5.1.1",
     "jest": "^26.6.3",
+    "lint-staged": "^10.5.4",
     "openapi-typescript-codegen": "^0.8.1",
     "prettier": "^2.1.2",
     "supertest": "^6.0.0",
