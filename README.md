@@ -4,7 +4,15 @@
 
 ```bash
 $ npm install
-$ npm run generate
+```
+
+## Build And Run
+
+```bash
+# build the project
+$ npm run build
+# build the image (if needed) and start the container, listening on port 3010
+$ docker-compose up --build
 ```
 
 ## Running the app
@@ -16,28 +24,6 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
-# production mode
+# production mode (need `npm run build` first)
 $ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Docker
-
-```bash
-# build the docker image
-$ npm run docker-build 
-# start container, listening on port 3010
-$ docker-compose up
 ```
