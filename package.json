@@ -1,10 +1,9 @@
 {
-  "name": "yovisto-ui",
+  "name": "metadata-analyzer-ui",
   "version": "1.0.0",
   "description": "",
   "author": "",
   "private": true,
-  "license": "ISC",
   "scripts": {
     "prebuild": "rimraf dist && npm run generate",
     "build": "nest build",

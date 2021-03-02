@@ -1,22 +1,34 @@
-# Yovisto UI
+# Metadata Analyzer UI
 
-## Installation
+## Runing With Docker
 
+Pull the current main-branch build from Dockerhub and start a Docker container, listening on port 3010:
 ```bash
-$ npm install
+# pull the image (if needed) and start the container
+$ docker-compose up
 ```
 
-## Build And Run
+## Building And Running With Docker
 
+Build and start a Docker container, listening on port 3010:
 ```bash
+# install dependencies
+$ npm install
+
 # build the project
 $ npm run build
-# build the image (if needed) and start the container, listening on port 3010
-$ docker-compose up --build
+
+# build the image (if needed) and start the container
+$ docker-compose -f docker-compose.dev.yml up --build
 ```
 
-## Running the app
+## Running on Host (Without Docker)
 
+```bash
+# install dependencies
+$ npm install
+```
+Choose one:
 ```bash
 # development
 $ npm run start
@@ -24,6 +36,7 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
-# production mode (need `npm run build` first)
+# production mode
+$ npm run build
 $ npm run start:prod
 ```

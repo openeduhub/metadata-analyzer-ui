@@ -1,9 +1,8 @@
 version: '3'
 
 services:
-
   ui:
-    build: .
+    image: openeduhub/metadata-analyzer-ui:main
     restart: unless-stopped
     ports:
       - 3010:3000/tcp
