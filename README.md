@@ -40,3 +40,16 @@ $ npm run start:dev
 $ npm run build
 $ npm run start:prod
 ```
+
+## Test
+
+```bash
+# unit tests
+$ npm run test
+
+# e2e tests (currently not used)
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
+```

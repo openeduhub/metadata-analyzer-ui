@@ -1,4 +1,6 @@
+import { HttpModule } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MarkdownParserService } from '../utils/markdown-parser/markdown-parser.service';
 import { CodecentricService } from './codecentric.service';
 
 describe('CodecentricService', () => {
@@ -6,7 +8,8 @@ describe('CodecentricService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [CodecentricService],
+            imports: [HttpModule],
+            providers: [CodecentricService, MarkdownParserService],
         }).compile();
 
         service = module.get<CodecentricService>(CodecentricService);

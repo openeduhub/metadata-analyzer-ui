@@ -5,6 +5,7 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
         />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <meta charset="UTF-8" />
         <title>Metadaten</title>
@@ -31,6 +32,13 @@
             h2 {
                 font-size: 1.64rem;
             }
+            h3 {
+                font-size: 1.64rem;
+                margin: 1.0933333333rem 0 .656rem 0;
+            }
+            h4 {
+                font-size: 1.15rem;
+            }
             p {
                 margin-top: 0;
             }
@@ -44,11 +52,31 @@
                 display: flex;
                 flex-direction: column;
             }
+            .collapsible-body > *:first-child {
+                margin-top: 0;
+            }
+            .info-icon {
+                margin-left: 5px;
+                cursor: default;
+            }
+            .align-icon {
+                display: flex;
+            }
+            .tooltip-content li {
+                list-style: outside !important;
+                margin-left: 25px;
+                text-align: left;
+            }
+            .tooltip-content ul {
+                margin: 0;
+            }
         </style>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const elements = document.querySelectorAll('.collapsible');
-                M.Collapsible.init(elements);
+                const collapsibles = document.querySelectorAll('.collapsible');
+                M.Collapsible.init(collapsibles);
+                const tooltipped = document.querySelectorAll('.tooltipped');
+                M.Tooltip.init(tooltipped, { html: true });
             });
         </script>
     </head>

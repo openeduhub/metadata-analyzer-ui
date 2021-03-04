@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { YovistoService } from './yovisto.service';
 
@@ -7,6 +8,7 @@ describe('YovistoService', () => {
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [YovistoService],
+            imports: [HttpModule],
         }).compile();
 
         service = module.get<YovistoService>(YovistoService);
