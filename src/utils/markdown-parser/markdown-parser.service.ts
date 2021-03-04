@@ -88,9 +88,6 @@ export class MarkdownParserService {
 
     /** @internal */
     getHeadingRegex(level: number): RegExp {
-        return new RegExp(
-            '^' + '#'.repeat(level) + '\\s+([\\p{General_Category=Letter}\\w\\s]+)$',
-            'gmu',
-        );
+        return new RegExp('^' + '#'.repeat(level) + '\\s+(.+)$', 'gm');
     }
 }

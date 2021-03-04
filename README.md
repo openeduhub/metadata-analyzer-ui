@@ -4,7 +4,9 @@
 
 Pull the current main-branch build from Dockerhub and start a Docker container, listening on port 3010:
 ```bash
-# pull the image (if needed) and start the container
+# pull the image (optional)
+$ docker-compose pull
+# start the container
 $ docker-compose up
 ```
 

@@ -116,7 +116,9 @@ export class CodecentricService implements OnModuleInit {
     }
 
     private findMarkdownDoc(title: string): MarkdownHeadingsMap | undefined {
-        title = title.replaceAll(' ', '');
-        return this.markdownDocs.subHeadings?.find(({ heading }) => heading?.endsWith(title));
+        title = title.toLowerCase().replaceAll(' ', '');
+        return this.markdownDocs.subHeadings?.find(({ heading }) =>
+            heading?.toLowerCase().endsWith(title),
+        );
     }
 }

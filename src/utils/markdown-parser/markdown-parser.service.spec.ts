@@ -37,7 +37,34 @@ describe('MarkdownParserService', () => {
         expect(headingsMap.subHeadings?.[0].subHeadings?.[0].heading).toBe('Merkmale');
         expect(headingsMap.subHeadings?.[0].subHeadings?.[1].heading).toBe('Allgemeine TODOs');
         expect(headingsMap.subHeadings?.[0].subHeadings?.[0].subHeadings).toBeDefined();
-        expect(headingsMap.subHeadings?.[0].subHeadings?.[0].subHeadings?.length).toBe(22);
+        const featureHeadings = headingsMap.subHeadings?.[0].subHeadings?.[0].subHeadings?.map(
+            (entry) => entry.heading,
+        );
+        expect(featureHeadings).toEqual([
+            'Barrierefreiheit alias Accessibility',
+            'Cookies',
+            'Dateiextrahierbarkeit alias ExtractFromFiles',
+            'DSGVO alias GDPR',
+            'Javascript',
+            'Gefährliche Dateierweiterungen alias MaliciousExtensions',
+            'Metabeschreibungsentdecker alias MetatagExplorer',
+            'Sicherheit alias Security',
+            'Werbung alias Advertisement',
+            'Privatsphäre alias EasyPrivacy',
+            'Cookies in Html alias CookiesInHtml',
+            'FanboyAnnoyance',
+            'Benachrichtigungen alias FanboyNotification',
+            'Soziale Netzwerke alias FanboySocialMedia',
+            'Anti-Werbeblocker alias AntiAdBlock',
+            'spezifisch deutsche Merkmale alias EasylistGermany',
+            'FSK18 alias EasylistAdult',
+            'Bezahlbarrieren alias Paywalls',
+            'Webseite einbettbar alias IFrameEmbeddable',
+            'PopUp',
+            'Registrierbarriere alias RegWall',
+            'LogInOut',
+            'Weitere Merkmale',
+        ]);
         expect(
             headingsMap.subHeadings?.[0].subHeadings?.[0].subHeadings?.[0].subHeadings,
         ).toBeUndefined();
@@ -45,5 +72,11 @@ describe('MarkdownParserService', () => {
 
     it('should deal with umlauts', () => {
         expect(service.getHeadingRegex(3).test('### Privatsphäre alias EasyPrivacy')).toBe(true);
+    });
+
+    it('should deal with dashes', () => {
+        expect(service.getHeadingRegex(3).test('### Anti-Werbeblocker alias AntiAdBlock')).toBe(
+            true,
+        );
     });
 });
