@@ -23,6 +23,8 @@ jobs:
       run: npm run lint
     - name: Build the project
       run: npm run build
+    - name: Run unit tests
+      run: npm run test
     - name: Build Docker image
       run: docker build --tag ${{ github.repository }}:${{ env.GITHUB_REF_SLUG }} .
     - name: Publish to DockerHub
