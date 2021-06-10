@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { renderToString } from '@vue/server-renderer';
 import { readFileSync } from 'fs';
 import { forkJoin } from 'rxjs';
@@ -16,7 +16,13 @@ export class AppService {
     constructor(
         private readonly yovistoService: YovistoService,
         private readonly codecentricService: CodecentricService,
-    ) {}
+        httpService: HttpService,
+    ) {
+        httpService.axiosRef.interceptors.response.use(undefined, (error) => {
+            console.log(error.toString(), '\nconfig:', error.config);
+            return Promise.reject(error);
+        });
+    }
 
     async getRoot(node: EduSharingNode) {
         return forkJoin({

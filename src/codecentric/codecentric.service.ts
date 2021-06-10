@@ -1,14 +1,14 @@
 import { HttpService, Injectable, OnModuleInit } from '@nestjs/common';
+import { Marked } from '@ts-stack/markdown';
 import * as fs from 'fs';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AppConfigService } from '../config/config.service';
 import { promisify } from 'util';
 import * as codecentricApiSpec from '../assets/api/codecentric.openapi.json';
 import { ExtractorTags, MetadataTags, OpenAPI } from '../generated';
 import { Output as CodecentricExtractMetaOutput } from '../generated/models/Output';
 import { EduSharingNode } from '../types/edu-sharing-node';
-import { Marked } from '@ts-stack/markdown';
-
 import {
     MarkdownHeadingsMap,
     MarkdownParserService,
@@ -27,12 +27,13 @@ export interface AnnotatedMetadataTags extends MetadataTags {
 
 @Injectable()
 export class CodecentricService implements OnModuleInit {
-    private readonly url = 'http://141.5.100.13:5057';
+    private readonly url = this.configService.get<string>('YOVISTO_RECOMMEND_URL');
     private markdownDocs!: MarkdownHeadingsMap;
 
     constructor(
         private readonly httpService: HttpService,
         private readonly markdownParserService: MarkdownParserService,
+        private readonly configService: AppConfigService,
     ) {
         OpenAPI.BASE = this.url;
     }

@@ -1,20 +1,24 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, defaultIfEmpty, map, switchMap } from 'rxjs/operators';
-import { EduSharingNode } from 'src/types/edu-sharing-node';
-import { SkosEntry } from 'src/types/skos-entry';
+import { EduSharingNode } from '../types/edu-sharing-node';
+import { SkosEntry } from '../types/skos-entry';
 import {
     AnalyzeData,
     DisciplinePrediction,
     PredictionResult,
     RecommendResult,
-} from 'src/types/yovisto';
+} from '../types/yovisto';
+import { AppConfigService } from '../config/config.service';
 
 @Injectable()
 export class YovistoService {
-    private readonly REPO_URL = 'https://redaktion-staging.openeduhub.net/edu-sharing/';
+    private readonly EDU_SHARING_URL = this.configService.get<string>('EDU_SHARING_URL');
 
-    constructor(private readonly httpService: HttpService) {}
+    constructor(
+        private readonly httpService: HttpService,
+        private readonly configService: AppConfigService,
+    ) {}
 
     analyze(node: EduSharingNode): Observable<{ data: AnalyzeData; disciplines: string[] }> {
         return this.fetchAnalyze(node).pipe(
@@ -62,7 +66,7 @@ export class YovistoService {
                         this.fetchEduSharingNodeMetadata(result[0]).pipe(
                             map((node) => ({
                                 label: node.title,
-                                url: this.REPO_URL + 'components/render/' + result[0],
+                                url: this.EDU_SHARING_URL + '/components/render/' + result[0],
                                 similarity: result[1],
                             })),
                             catchError(() => of(null)),
@@ -87,7 +91,7 @@ export class YovistoService {
             },
         };
         return this.httpService
-            .post<AnalyzeData>('https://wlo.yovisto.com/services/analyze', data)
+            .post<AnalyzeData>(this.configService.get<string>('YOVISTO_ANALYZE_URL'), data)
             .pipe(map((response) => response.data));
     }
 
@@ -98,14 +102,14 @@ export class YovistoService {
         ].join(' ');
         const data = { text };
         return this.httpService
-            .post('https://wlo.yovisto.com/predict_subjects', data)
+            .post(this.configService.get<string>('YOVISTO_PREDICT_SUBJECTS_URL'), data)
             .pipe(map((response) => JSON.parse(response.data)));
     }
 
     private fetchRecommend(node: EduSharingNode): Observable<PredictionResult[]> {
         const data = { doc: node.ref.id };
         return this.httpService
-            .post('https://wlo.yovisto.com/recommend', data)
+            .post(this.configService.get<string>('YOVISTO_RECOMMEND_URL'), data)
             .pipe(map((response) => JSON.parse(response.data)));
     }
 
@@ -116,7 +120,8 @@ export class YovistoService {
     }
 
     private fetchEduSharingNodeMetadata(nodeId: string): Observable<EduSharingNode> {
-        const metadataUrl = this.REPO_URL + 'rest/node/v1/nodes/-home-/' + nodeId + '/metadata';
+        const metadataUrl =
+            this.EDU_SHARING_URL + '/rest/node/v1/nodes/-home-/' + nodeId + '/metadata';
         return this.httpService
             .get<{ node: EduSharingNode }>(metadataUrl)
             .pipe(map((result) => result.data.node));

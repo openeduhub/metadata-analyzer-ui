@@ -1,6 +1,10 @@
 # Metadata Analyzer UI
 
-## Runing With Docker
+## Configuration
+
+Configuration is done via the file `.env` for all available setups.
+
+## Run an Online Docker Image
 
 Pull the current main-branch build from Dockerhub and start a Docker container, listening on port 3010:
 ```bash
@@ -10,7 +14,7 @@ $ docker-compose pull
 $ docker-compose up
 ```
 
-## Building And Running With Docker
+## Build And Run a Local Docker Image
 
 Build and start a Docker container, listening on port 3010:
 ```bash
@@ -21,10 +25,10 @@ $ npm install
 $ npm run build
 
 # build the image (if needed) and start the container
-$ docker-compose -f docker-compose.dev.yml up --build
+$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 ```
 
-## Running on Host (Without Docker)
+## Run in Development Setup
 
 ```bash
 # install dependencies
@@ -43,7 +47,7 @@ $ npm run build
 $ npm run start:prod
 ```
 
-## Test
+## Run Tests
 
 ```bash
 # unit tests
