@@ -1,10 +1,14 @@
 version: '3'
 
 services:
-  ui:
-    image: openeduhub/metadata-analyzer-ui:main
-    restart: unless-stopped
-    ports:
-      - 3010:3000/tcp
-    env_file:
-      - .env
+    ui:
+        image: openeduhub/metadata-analyzer-ui:main
+        restart: unless-stopped
+        ports:
+            - 3010:3000/tcp
+        env_file:
+            - .env
+        environment:
+            - YOVISTO_PREDICT_SUBJECTS_URL=${YOVISTO_PREDICT_SUBJECTS_URL-http://predict-subjects:8080/predict_subjects}
+    predict-subjects:
+        image: openeduhub/discipline-classification:main
