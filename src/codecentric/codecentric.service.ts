@@ -3,9 +3,10 @@ import { Marked } from '@ts-stack/markdown';
 import * as fs from 'fs';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AppConfigService } from '../config/config.service';
+import { Result, wrapAsResult } from '../utils/result';
 import { promisify } from 'util';
 import * as codecentricApiSpec from '../assets/api/codecentric.openapi.json';
+import { AppConfigService } from '../config/config.service';
 import { ExtractorTags, MetadataTags, OpenAPI } from '../generated';
 import { Output as CodecentricExtractMetaOutput } from '../generated/models/Output';
 import { EduSharingNode } from '../types/edu-sharing-node';
@@ -27,7 +28,7 @@ export interface AnnotatedMetadataTags extends MetadataTags {
 
 @Injectable()
 export class CodecentricService implements OnModuleInit {
-    private readonly url = this.configService.get<string>('YOVISTO_RECOMMEND_URL');
+    private readonly url = this.configService.get<string>('CODECENTRIC_URL');
     private markdownDocs!: MarkdownHeadingsMap;
 
     constructor(
@@ -50,14 +51,15 @@ export class CodecentricService implements OnModuleInit {
         }
     }
 
-    extractMeta(node: EduSharingNode): Observable<AnnotatedExtractorTags | null> {
+    extractMeta(node: EduSharingNode): Observable<Result<AnnotatedExtractorTags | null>> {
         const contentUrl = node.properties['ccm:wwwurl']?.[0];
         if (contentUrl) {
             return this.fetchExtractMeta(contentUrl).pipe(
                 map((output) => this.annotateExtractorTags(output.meta)),
+                wrapAsResult(),
             );
         } else {
-            return of(null);
+            return of(Result.Ok(null));
         }
     }
 

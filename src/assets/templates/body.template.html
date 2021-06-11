@@ -1,97 +1,109 @@
 <div class="container">
     <h1>Gefundene Daten für "{{ title }}"</h1>
-    <div>Erkannte Sprache: {{ language }}</div>
+    <result v-bind:result="language">
+        <div>Erkannte Sprache: {{ language.ok() }}</div>
+    </result>
     <div class="row">
         <div class="col s6">
             <h2>Fachgebiete (via Text Analyzer)</h2>
-            <ul class="discipline">
-                <li v-for="d in disciplinesAnalyze">{{ d }}</li>
-            </ul>
+            <result v-bind:result="disciplinesAnalyze">
+                <ul class="discipline">
+                    <li v-for="d in disciplinesAnalyze.ok()">{{ d }}</li>
+                </ul>
+            </result>
         </div>
         <div class="col s6">
             <h2>Fachgebiete (via Prediction Network)</h2>
-            <ul class="discipline">
-                <li v-for="d in disciplinesPredict">
-                    {{ d.label }} ({{ d.precision.toFixed(2) }})
-                </li>
-            </ul>
+            <result v-bind:result="disciplinesPredict">
+                <ul class="discipline">
+                    <li v-for="d in disciplinesPredict.ok()">
+                        {{ d.label }} ({{ d.precision.toFixed(2) }})
+                    </li>
+                </ul>
+            </result>
         </div>
     </div>
     <h2>Ähnliche/Empfohlene Elemente (via Prediction Network)</h2>
-    <ul class="discipline">
-        <li v-for="d in recommend">
-            <a :href="d.url" target="_BLANK">{{ d.label }}</a>
-            ({{ d.similarity.toFixed(2) }})
-        </li>
-    </ul>
+    <result v-bind:result="recommend">
+        <ul class="discipline">
+            <li v-for="d in recommend.ok()">
+                <a :href="d.url" target="_BLANK">{{ d.label }}</a>
+                ({{ d.similarity.toFixed(2) }})
+            </li>
+        </ul>
+    </result>
     <h2>Kategorien (Text Analyzer / Wikipedia)</h2>
-    <ul>
-        <li v-for="(c, key) in categories">
-            <a :href="'https://de.wikipedia.org/wiki/' + key" target="_blank">{{ key }}</a>
-            ({{ c }})
-        </li>
-    </ul>
+    <result v-bind:result="categories">
+        <ul>
+            <li v-for="(c, key) in categories.ok()">
+                <a :href="'https://de.wikipedia.org/wiki/' + key" target="_blank">{{ key }}</a>
+                ({{ c }})
+            </li>
+        </ul>
+    </result>
     <h2>Akzeptanzkriterien</h2>
-    <ul class="collapsible meta" v-if="meta">
-        <li v-for="m in meta">
-            <div class="collapsible-header">
-                <div
-                    class="title"
-                    :class="{ good: m.decision === false, bad: m.decision === true, 'undecided': m.probability < 0.5 }"
-                >
-                    {{ m.title }}: {{ m.decision }} ({{ m.probability.toFixed(2) }})
+    <result v-bind:result="meta">
+        <ul class="collapsible meta" v-if="meta.ok()">
+            <li v-for="m in meta.ok()">
+                <div class="collapsible-header">
+                    <div
+                        class="title"
+                        :class="{ good: m.decision === false, bad: m.decision === true, 'undecided': m.probability < 0.5 }"
+                    >
+                        {{ m.title }}: {{ m.decision }} ({{ m.probability.toFixed(2) }})
+                    </div>
                 </div>
-            </div>
-            <div class="collapsible-body">
-                <h3>Werte</h3>
-                <p>
-                    <span class="align-icon">
-                        decision: {{ m.decision }}
-                        <i
-                            class="info-icon material-icons tooltipped"
-                            data-tooltip="<ul>
+                <div class="collapsible-body">
+                    <h3>Werte</h3>
+                    <p>
+                        <span class="align-icon">
+                            decision: {{ m.decision }}
+                            <i
+                                class="info-icon material-icons tooltipped"
+                                data-tooltip="<ul>
                                 <li>Die getroffene Entscheidung.</li>
                                 <li><code>wahr</code> oder <code>falsch</code>. <code>wahr</code> zeigt an, dass das Merkmal erfüllt ist.</li>
                                 <li><code>decision</code> ist explizit nur in Kombination mit <code>probability</code> wertvoll.</li>
                             </ul>"
-                            >info_outline</i
-                        >
-                    </span>
-                </p>
-                <p>
-                    <span class="align-icon">
-                        probability: {{ m.probability.toFixed(2) }}
-                        <i
-                            class="info-icon material-icons tooltipped"
-                            data-tooltip="<ul>
+                                >info_outline</i
+                            >
+                        </span>
+                    </p>
+                    <p>
+                        <span class="align-icon">
+                            probability: {{ m.probability.toFixed(2) }}
+                            <i
+                                class="info-icon material-icons tooltipped"
+                                data-tooltip="<ul>
                                 <li>Die Wahrscheinlichkeit, dass die Entscheidung zutrifft.</li>
                                 <li>Ein Wert von 0 bedeutet, die Entscheidung hat keinen Wert. Egal ob <code>wahr</code> oder <code>falsch</code>, wir wissen nichts.</li>
                                 <li>Dies geschieht bspw., wenn das Merkmal exakt auf der Schwelle zwischen <code>wahr</code> und <code>falsch</code>. 
                                 An diesem Punkt wären beide Entscheidungen möglich und würde sich die Webseite nur minimal ändern, wäre die Entscheidung anders. 
                                 Daher ist hier nichts sicher auszusagen.</li>
                             </ul>"
-                            >info_outline</i
-                        >
-                    </span>
-                </p>
-                <p>
-                    <span class="align-icon">
-                        values:
-                        <i
-                            class="info-icon material-icons tooltipped"
-                            data-tooltip="<ul>
+                                >info_outline</i
+                            >
+                        </span>
+                    </p>
+                    <p>
+                        <span class="align-icon">
+                            values:
+                            <i
+                                class="info-icon material-icons tooltipped"
+                                data-tooltip="<ul>
                                 <li>Die rohen Werte, welche das Merkmal gefunden hat</li>
                                 <li>Basierend auf diesen Werten werden die Entscheidung und deren Wahrscheinlichkeit bestimmt</li>
                             </ul>"
-                            >info_outline</i
-                        >
-                    </span>
-                </p>
-                <pre>{{ JSON.stringify(m.values, null, 4) }}</pre>
-                <h3>Beschreibung</h3>
-                <p v-html="m.description"></p>
-            </div>
-        </li>
-    </ul>
-    <p v-else>Element gibt keine URL an.</p>
+                                >info_outline</i
+                            >
+                        </span>
+                    </p>
+                    <pre>{{ JSON.stringify(m.values, null, 4) }}</pre>
+                    <h3>Beschreibung</h3>
+                    <p v-html="m.description"></p>
+                </div>
+            </li>
+        </ul>
+        <p v-else>Element gibt keine URL an.</p>
+    </result>
 </div>

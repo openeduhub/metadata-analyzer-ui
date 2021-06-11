@@ -33,17 +33,26 @@ export class AppService {
         }).pipe(
             map((results) => ({
                 title: node.properties['cclom:title']?.[0] ?? node.properties['cm:name']?.[0],
-                language: results.analyze.data.language,
-                disciplinesAnalyze: results.analyze.disciplines,
+                language: results.analyze.map((analyze) => analyze.data.language),
+                disciplinesAnalyze: results.analyze.map((analyze) => analyze.disciplines),
                 disciplinesPredict: results.predictDisciplines,
                 recommend: results.recommend,
-                categories: results.analyze.data.essentialCategories,
+                categories: results.analyze.map((analyze) => analyze.data.essentialCategories),
                 meta: results.extractMeta,
             })),
             switchMap((data) => {
                 const app = createSSRApp({
                     data: () => data,
                     template: bodyTemplate,
+                });
+                app.component('result', {
+                    props: ['result'],
+                    template: `
+                        <slot v-if="result.isOk()">result works</slot>
+                        <p v-else class="error">
+                            Ein Fehler ist aufgetreten: {{ result.err().message }}
+                        </p>
+                    `,
                 });
                 return renderToString(app);
             }),

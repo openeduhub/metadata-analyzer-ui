@@ -1,6 +1,8 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, defaultIfEmpty, map, switchMap } from 'rxjs/operators';
+import { Result, wrapAsResult } from '../utils/result';
+import { AppConfigService } from '../config/config.service';
 import { EduSharingNode } from '../types/edu-sharing-node';
 import { SkosEntry } from '../types/skos-entry';
 import {
@@ -9,7 +11,6 @@ import {
     PredictionResult,
     RecommendResult,
 } from '../types/yovisto';
-import { AppConfigService } from '../config/config.service';
 
 @Injectable()
 export class YovistoService {
@@ -20,7 +21,9 @@ export class YovistoService {
         private readonly configService: AppConfigService,
     ) {}
 
-    analyze(node: EduSharingNode): Observable<{ data: AnalyzeData; disciplines: string[] }> {
+    analyze(
+        node: EduSharingNode,
+    ): Observable<Result<{ data: AnalyzeData; disciplines: string[] }>> {
         return this.fetchAnalyze(node).pipe(
             switchMap((data) =>
                 forkJoin(
@@ -35,10 +38,11 @@ export class YovistoService {
                     })),
                 ),
             ),
+            wrapAsResult(),
         );
     }
 
-    predictDisciplines(node: EduSharingNode): Observable<DisciplinePrediction[]> {
+    predictDisciplines(node: EduSharingNode): Observable<Result<DisciplinePrediction[]>> {
         return this.fetchPredictSubjects(node).pipe(
             switchMap((data) =>
                 forkJoin(
@@ -55,10 +59,11 @@ export class YovistoService {
                     ),
                 ).pipe(defaultIfEmpty<{ label: string; precision: number }[]>([])),
             ),
+            wrapAsResult(),
         );
     }
 
-    recommend(node: EduSharingNode): Observable<RecommendResult[]> {
+    recommend(node: EduSharingNode): Observable<Result<RecommendResult[]>> {
         return this.fetchRecommend(node).pipe(
             switchMap((results) =>
                 forkJoin(
@@ -81,6 +86,7 @@ export class YovistoService {
                     ),
                 ),
             ),
+            wrapAsResult(),
         );
     }
 
