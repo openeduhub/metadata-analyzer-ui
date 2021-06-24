@@ -8,12 +8,12 @@
     "prebuild": "rimraf dist && npm run generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "nest start -e \"node $npm_package_config_nodeArgs\"",
     "prestart:dev": "npm run generate",
-    "start:dev": "nest start --watch",
+    "start:dev": "nest start --watch -e \"node $npm_package_config_nodeArgs\"",
     "prestart:debug": "npm run generate",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:debug": "nest start --debug --watch -e \"node $npm_package_config_nodeArgs\"",
+    "start:prod": "node $npm_package_config_nodeArgs dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
@@ -23,6 +23,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "generate": "openapi --input ./src/assets/api/codecentric.openapi.json --output ./src/generated/ --client xhr",
     "postinstall": "husky install || exit 0"
+  },
+  "config": {
+    "nodeArgs": "--max-http-header-size=5242880"
   },
   "lint-staged": {
     "{src,test}/**/*.ts": "prettier --write",
